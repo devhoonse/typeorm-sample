@@ -1,4 +1,18 @@
-import {Entity, BaseEntity, PrimaryGeneratedColumn, Column, CreateDateColumn} from "typeorm"
+import {
+    Entity,
+    BaseEntity,
+    Column,
+    PrimaryGeneratedColumn,
+    CreateDateColumn,
+    JoinColumn,
+    JoinTable,
+    OneToOne,
+    OneToMany,
+    ManyToMany
+} from "typeorm"
+import {Profile} from "./Profile";
+import {Post} from "./Post";
+import {Group} from "./Group";
 
 @Entity()
 export class User extends BaseEntity {
@@ -20,6 +34,17 @@ export class User extends BaseEntity {
 
     @Column({ default: true })
     enabled: boolean;
+
+    @JoinColumn()
+    @OneToOne(type => Profile, profile => profile.user, {onDelete: "CASCADE"})
+    profile: Profile;
+
+    @JoinColumn()
+    @OneToMany(type => Post, post => post.user, {cascade: true})
+    posts: Array<Post>;
+
+    @ManyToMany(type => Group, group => group.users)
+    groups: Array<Group>;
 
     @CreateDateColumn()
     createdAt; Date;
